@@ -128,14 +128,14 @@ for i = 1:6
     subplot(3,2,i)
     plot(ts/T,roe_fode(i,:),'LineWidth',2)
     hold on
-%     plot(ts/T,roef(i)*ones(1,num_steps),'r--')
+    plot(ts/T,roef(i)*ones(1,num_steps),'r--')
     plot(ts/T,roe_stm(i,:),'LineWidth',2)
     ylabel(labels(i))
     xlabel('Orbital Periods')
     grid on
 end
-set(gcf,'Position',[0 0 1000 350])
-% exportgraphics(gcf,'203_figures\roe_stm.eps')
+% set(gcf,'Position',[0 0 1000 350])
+exportgraphics(gcf,'203_figures\roe.png','Resolution',300)
 
 % % Plot STM error
 % figure()
@@ -164,4 +164,4 @@ xlabel('I (km)')
 ylabel('J (km)')
 zlabel('K (km)')
 grid on
-% exportgraphics(gcf,'203_figures\orbit_eci.eps')
+exportgraphics(gcf,'203_figures\orbit_eci.png','Resolution',300)

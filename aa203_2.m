@@ -150,12 +150,12 @@ for i = 1:6
     xlabel('Orbital Periods')
     grid on
 end
-set(gcf,'Position',[0 0 1000 350])
-% exportgraphics(gcf,'203_figures\closed_form.eps')
+% set(gcf,'Position',[0 0 1000 350])
+exportgraphics(gcf,'203_figures\closed_form.png','Resolution',300)
 
 % Plot deltaV history
 figure()
-labels = {'{\Delta}v_R (m/s)','{\Delta}v_T (m/s)','{\Delta}v_N (m/s)','{\Delta}v (m/s)'};
+labels = {'{\Delta}v_R (m/s)','{\Delta}v_T (m/s)','{\Delta}v_N (m/s)','\Sigma |{\Delta}v| (m/s)'};
 for i = 1:3
     subplot(4,2,2*i-1)
     plot(ts(1:end)/T,us(i,:)*1000,'LineWidth',2)
@@ -176,8 +176,8 @@ plot(ts(1:end)/T,deltav_cum,'LineWidth',2)
 grid on
 ylabel('Cumulative \Deltav (m/s)')
 xlabel('Orbital Periods')
-set(gcf,'Position',[0 0 1000 350])
-% exportgraphics(gcf,'203_figures\closed_form_deltav.eps')
+% set(gcf,'Position',[0 0 1000 350])
+exportgraphics(gcf,'203_figures\closed_form_deltav.png','Resolution',300)
 
 %% iLQR Solution
 
@@ -217,8 +217,8 @@ for i = 1:6
     xlabel('Orbital Periods')
     grid on
 end
-set(gcf,'Position',[0 0 1000 400])
-% exportgraphics(gcf,'203_figures\roe_ilqr.eps')
+% set(gcf,'Position',[0 0 1000 400])
+exportgraphics(gcf,'203_figures\roe_ilqr.png','Resolution',300)
 
 % Plot ROEs from iLQR solution
 labels = {'a\deltaa (m)','a\delta\lambda (m)','a\deltae_x (m)','a\deltae_y (m)','a\deltai_x (m)','a\deltai_y (m)'};
@@ -232,8 +232,8 @@ for i = 1:6
     xlabel('Orbital Periods')
     grid on
 end
-set(gcf,'Position',[0 0 1000 400])
-% exportgraphics(gcf,'203_figures\roe_ilqr_final.eps')
+% set(gcf,'Position',[0 0 1000 400])
+exportgraphics(gcf,'203_figures\roe_ilqr_final.png','Resolution',300)
 
 % Plot deltaV history
 figure()
@@ -258,8 +258,8 @@ plot(ts(1:end-1)/T,deltav_cum,'LineWidth',2)
 grid on
 ylabel('Cumulative \Deltav (m/s)')
 xlabel('Orbital Periods')
-set(gcf,'Position',[0 0 1000 350])
-% exportgraphics(gcf,'203_figures\deltav_hist.eps')
+% set(gcf,'Position',[0 0 1000 350])
+exportgraphics(gcf,'203_figures\deltav_hist.png','Resolution',300)
 
 % deltaV LBs
 
@@ -467,34 +467,40 @@ axis equal
 grid on
 % exportgraphics(gcf,'203_figures\velocity_maneuvers.eps')
 
-% %% Plot 3D
-% 
-% M(num_steps-1) = struct('cdata',[],'colormap',[]);
-% [xE, yE, zE] = ellipsoid(0,0,0,re,re,re,20);
-% close all
-% 
-% tic
-% parfor i = 1:num_steps-1
-%     h = figure();
+%% Plot 3D
+
+M(num_steps-1) = struct('cdata',[],'colormap',[]);
+[xE, yE, zE] = ellipsoid(0,0,0,re,re,re,20);
+close all
+
+parfor i = 1:10
+    h = figure();
 %     h.Visible = 'off';
-%     surface(xE,yE,zE,'FaceColor','#4DBEEE','EdgeColor','black');
-%     axis equal
-%     hold on
-%     plot3(r0_eci(1,i),r0_eci(2,i),r0_eci(3,i),'.r','MarkerSize',20);
-%     plot3(r1_eci(1,i),r1_eci(2,i),r1_eci(3,i),'.b','MarkerSize',20);
-%     quiver3(r1_eci(1,i),r1_eci(2,i),r1_eci(3,i),u_eci(1,i),u_eci(2,i),u_eci(3,i),10000,'black','LineWidth',2)
-%     hold off
-%     v = r1_eci(:,i);
-%     view(v)
-%     camzoom(300)
-%     set(gcf,'Position',[0 0 1920 1080])
-%     M(i) = getframe;
-% end
-% toc
-% 
-% %%
+    surface(xE,yE,zE,'FaceColor','#4DBEEE','EdgeColor','black');
+    axis equal
+    hold on
+    quiver3(r1_eci(1,i),r1_eci(2,i),r1_eci(3,i),u_eci(1,i),u_eci(2,i),u_eci(3,i),10000,'color',"#EDB120",'LineWidth',2)
+    plot3(r0_eci(1,i),r0_eci(2,i),r0_eci(3,i),'.b','MarkerSize',20);
+    plot3(r1_eci(1,i),r1_eci(2,i),r1_eci(3,i),'.r','MarkerSize',20);
+    hold off
+    set(gcf,'Position',[0 0 960 1080])
+    camzoom(200)
+    v = r1_eci(:,i);
+    view(v)
+    M(i) = getframe;
+end
+
+%%
 % close all
 % figure()
 % axis off
 % set(gcf,'Position',[0 0 1920 1080])
 % movie(M,1,10)
+
+v = VideoWriter('iLQR_zoom250.mp4','MPEG-4');
+v.FrameRate = 15;
+open(v)
+for i = 1:length(M)
+    writeVideo(v,M(i));
+end
+close(v)
